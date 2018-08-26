@@ -1,10 +1,29 @@
 //uso de highlight
 //$("sel-lan").change(function () {    
-        
+      
 //});
+///ontener usuario
+
+////////
+
+
 var myCode;
 var editor = ace.edit("editor");
 $(document).ready(function () {
+    
+    $.ajax({
+     
+        url: "/obtener",  
+        method:"post",  
+        
+        dataType: "json",
+        success: function (response) {
+           $("#btn-obtener-sesion").append(response);
+           console.log(response);
+        }
+    }); 
+    
+
     $("#editor").hide();
     $("#sel-lan").change(function () {
         $("#editor").show();
@@ -35,9 +54,37 @@ $("#btn-guardarArchivo").click(function () {
         nombre:$("#txt-nombre").val(),
         mensaje:editor.getSession().getValue()
     }
-    console.log(archivo);
+    //console.log(archivo);
+    $.ajax({
+       
+        url: "/guardar-archivo",
+        method:"post",
+        data: "nombre="+archivo.nombre+"&mensaje="+archivo.mensaje,
+        dataType: "json",
+        success: function (response) {
+            if (response.affectedRows==1){
+				console.log(response);
+				alert("todo bien");
+			}
+        }
+    });
     
 });
+
+
+//$("btn-obtener-sesion").click(function () { 
+  //  $.ajax({
+        
+    //    url: "/obtener-sesion",
+      //  method:"post",
+        //data: "data",
+        //dataType: "dataType",
+        //success: function (response) {
+            
+       // }
+    //});
+    
+//});
 
 
 

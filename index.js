@@ -7,6 +7,8 @@ var passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
 var app = express();
 
+var varSesion;
+
 var credenciales ={
     user:"root",
     password:"password",
@@ -44,6 +46,7 @@ app.post("/login",function(peticion,respuesta){
             peticion.session.codigoUsuario=data[0].id_Tbl_Usuarios;
             data[0].estatus=0;
             respuesta.send(data[0]);
+            varSesion=peticion.session.correo;
         }
         else{
             respuesta.send({estatus:1,mensale:"login fallido"});
@@ -61,6 +64,24 @@ app.post("/registro", function(peticion,respuesta){
         respuesta.send(result);
     }
     );
+});
+
+app.post("/guardar-archivo", function(peticion, respuesta){
+    var conexion=mysql.createConnection(credenciales);
+    var sql="insert into tbl_archivos(nombre,fecha_creacion,mensaje) values(?,NOW(),?)";
+    conexion.query(sql,[peticion.body.nombre,peticion.body.mensaje],
+    function(err, result){
+        if(err) throw err;
+        respuesta.send(result);
+        //console.log(result);
+    }  
+    )
+});
+
+app.post("/obtener",function(peticion,respuesta){
+    respuesta.send(varSesion); 
+    console.log(respuesta.send(varSesion));
+    //console.log(respuesta.send(peticion.session.correo));
 });
 
 app.get("/logout",function(peticion, respuesta){
